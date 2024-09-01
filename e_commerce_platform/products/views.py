@@ -2,14 +2,15 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from django.http import JsonResponse, HttpResponse
-from .models import Product
 from .upload_data import upload_data, extract_and_clean_product_data
 from .utils import generate_summary
 from . import constants
 
 
 class UploadData(APIView):
-
+    """
+        Upload data
+    """
     def post(self, request):
         response_status = status.HTTP_400_BAD_REQUEST
         res = {
@@ -33,7 +34,9 @@ class UploadData(APIView):
 
 
 class SummaryReport(APIView):
-
+    """
+        Generate summary
+    """
     def get(self, request):
         try:
             summary = generate_summary()

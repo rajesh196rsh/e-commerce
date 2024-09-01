@@ -7,6 +7,9 @@ from .serializers import UserSerializer
 
 
 class SignUpView(APIView):
+    """
+        Create new user
+    """
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -16,6 +19,9 @@ class SignUpView(APIView):
 
 
 class LoginView(APIView):
+    """
+        Login existing user
+    """
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
