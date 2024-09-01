@@ -2,9 +2,9 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from django.http import JsonResponse, HttpResponse
-import csv
-from io import StringIO
+from .models import Product
 from .upload_data import upload_data, extract_and_clean_product_data
+from .utils import generate_summary
 from . import constants
 
 
@@ -30,3 +30,21 @@ class UploadData(APIView):
             return Response(e)
 
         return Response(res, status=response_status)
+
+
+class SummaryReport(APIView):
+
+    def get(self, request):
+        try:
+            summary = generate_summary()
+            response = HttpResponse(summary.getvalue(), content_type="text/csv")
+            response["Content-Disposition"] = "attachment; filename=summary_report.csv"
+        except Exception as e:
+            print(constants.SUMMARY_REPORT_FAILURE_MESSAGE)
+            print(e)
+            return JsonResponse(
+                {"error": constants.SUMMARY_REPORT_FAILURE_MESSAGE},
+                status=500
+            )
+
+        return response
