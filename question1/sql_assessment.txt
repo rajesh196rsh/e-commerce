@@ -1,0 +1,52 @@
+--Adding most purchased product
+WITH Recent_Orders AS (
+    SELECT
+        o.customer_id,
+        oi.product_id,
+        p.category,
+        SUM(oi.quantity * oi.price_per_unit) AS total_spent
+    FROM
+        Orders o
+        JOIN Order_Items oi ON o.order_id = oi.order_id
+        JOIN Products p ON oi.product_id = p.product_id
+    WHERE
+        o.order_date >= DATEADD(YEAR, -2, GETDATE())
+    GROUP BY
+        o.customer_id,
+        oi.product_id,
+        p.category
+),
+Customer_Total_Spending AS (
+    SELECT
+        ro.customer_id,
+        SUM(ro.total_spent) AS total_spent
+    FROM
+        Recent_Orders ro
+    GROUP BY
+        ro.customer_id
+),
+Customer_Top_Category AS (
+    SELECT
+        ro.customer_id,
+        ro.category,
+        SUM(ro.total_spent) AS category_spent,
+        ROW_NUMBER() OVER (PARTITION BY ro.customer_id ORDER BY SUM(ro.total_spent) DESC) AS rn
+    FROM
+        Recent_Orders ro
+    GROUP BY
+        ro.customer_id,
+        ro.category
+)
+SELECT
+	TOP 5
+    c.customer_id,
+    c.customer_name,
+    c.email,
+    cts.total_spent,
+    ctc.category AS most_purchased_category
+FROM
+    Customers c
+    JOIN Customer_Total_Spending cts ON c.customer_id = cts.customer_id
+    JOIN Customer_Top_Category ctc ON ctc.customer_id = c.customer_id AND ctc.rn = 1
+ORDER BY
+    cts.total_spent DESC;
