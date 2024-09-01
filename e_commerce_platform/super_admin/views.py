@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
 from .serializers import UserSerializer
+from products import constants
 
 
 class SignUpView(APIView):
@@ -14,7 +15,7 @@ class SignUpView(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"message": constants.USER_CREATION_SUCCESSFUL}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -32,4 +33,4 @@ class LoginView(APIView):
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
             })
-        return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"message": constants.INVALID_CREDENTIALS}, status=status.HTTP_401_UNAUTHORIZED)
