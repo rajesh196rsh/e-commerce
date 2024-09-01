@@ -84,6 +84,12 @@ Installation
 https://github.com/rajesh196rsh/e-commerce.git
 cd e-commerce
 
+### create virtual environemnt
+virtualenv venv
+
+### activate virtual environment
+source venv/bin/activate
+
 ### Install the dependencies:
 pip install -r requirements.txt
 
@@ -99,3 +105,4 @@ Configuration
 
     Update the constants.py file with appropriate messages and settings.
     Ensure that your database settings in settings.py are configured correctly.
+
